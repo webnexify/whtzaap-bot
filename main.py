@@ -1,72 +1,37 @@
+# Flask app.py – already complete
 from flask import Flask, request, jsonify
-import requests
 
 app = Flask(__name__)
-group_members = {}
 
-# ✅ This is what your Baileys gateway expects
+@app.route('/', methods=['GET'])
+def home():
+    return 'WhatsApp Bot is running'
+
 @app.route('/message', methods=['POST'])
 def message():
     data = request.get_json()
-    sender = data.get('from')
+
+    from_id = data.get('from')
     text = data.get('text', '').lower()
+    is_group = data.get('isGroup', False)
+    participants = data.get('participants', [])
 
-    # Basic auto-response logic
+    if not from_id or not text:
+        return jsonify({'reply': None})
+
+    # Respond to .tagall
+    if is_group and text == '.tagall':
+        mention_text = '👥 Tagging all:\n' + ' '.join([f'@{p.split("@")[0]}' for p in participants])
+        return jsonify({'reply': mention_text, 'mentions': participants})
+
+    # Basic replies
     if 'hi' in text or 'hello' in text:
-        reply = f'👋 Hello {sender}, how can I help you?'
-    elif 'help' in text:
-        reply = 'Here are some commands you can try:\n- !mentionall\n- !sticker'
-    else:
-        reply = f'You said: {text}'
+        return jsonify({'reply': f'👋 Hello from the bot!'})
 
-    return jsonify({'reply': reply})
+    if 'help' in text:
+        return jsonify({'reply': 'Commands:\n- `.tagall` to tag everyone\n- `hello` or `hi` for greetings'})
 
-# Your existing test route
-@app.route('/', methods=['GET'])
-def home():
-    return 'WhatsApp Bot is running '
-
-# Your existing webhook logic
-@app.route('/webhook', methods=['POST'])
-def webhook():
-    message = request.form.get('Body')
-    sender = request.form.get('From')
-    group_id = request.form.get('GroupId')
-
-    if not group_id:
-        return 'Group ID missing', 400
-
-    if group_id not in group_members:
-        group_members[group_id] = get_group_members(group_id)
-
-    if 'added' in message.lower() and 'to the group' in message.lower():
-        new_member = message.split('added ')[1].split(' to the group')[0]
-        send_whatsapp(group_id, f'Welcome @{new_member} to our group!')
-        send_whatsapp(group_id, 'Audio: welcome-bgm.mp3', media_url='https://example.com/welcome-bgm.mp3')
-
-    elif message.strip().lower() == '!mentionall':
-        mentions = ', '.join([f'@{m}' for m in group_members[group_id]])
-        send_whatsapp(group_id, f'Hey {mentions}!')
-
-    elif message.lower().startswith('hello'):
-        send_whatsapp(group_id, f'Hey @{sender}! How are you?')
-
-    elif message.lower().startswith('!sticker'):
-        send_whatsapp(group_id, 'Sticker', media_url='https://example.com/sticker.png')
-
-    return 'OK', 200
-
-def send_whatsapp(to, body, media_url=None):
-    data = {'to': to, 'message': body}
-    if media_url:
-        data['media_url'] = media_url
-    try:
-        requests.post('http://localhost:3001/send', json=data)
-    except Exception as e:
-        print(f"Failed to send: {e}")
-
-def get_group_members(group_id):
-    return ['member1', 'member2', 'member3']
+    return jsonify({'reply': f'You said: {text}'})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=3000, debug=True)
+    app.run(host='0.0.0.0', port=3000)
