@@ -1,13 +1,32 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import requests
 
 app = Flask(__name__)
 group_members = {}
 
+# ✅ This is what your Baileys gateway expects
+@app.route('/message', methods=['POST'])
+def message():
+    data = request.get_json()
+    sender = data.get('from')
+    text = data.get('text', '').lower()
+
+    # Basic auto-response logic
+    if 'hi' in text or 'hello' in text:
+        reply = f'👋 Hello {sender}, how can I help you?'
+    elif 'help' in text:
+        reply = 'Here are some commands you can try:\n- !mentionall\n- !sticker'
+    else:
+        reply = f'You said: {text}'
+
+    return jsonify({'reply': reply})
+
+# Your existing test route
 @app.route('/', methods=['GET'])
 def home():
     return 'WhatsApp Bot is running '
 
+# Your existing webhook logic
 @app.route('/webhook', methods=['POST'])
 def webhook():
     message = request.form.get('Body')
