@@ -22,7 +22,10 @@ def message():
     # Respond to .tagall
     if is_group and text == '.tagall':
         mention_text = '👥 Tagging all:\n' + ' '.join([f'@{p.split("@")[0]}' for p in participants])
+        
         return jsonify({'reply': mention_text, 'mentions': participants})
+        
+
 
     # Basic replies
     if 'hi' in text or 'hello' in text:
@@ -31,7 +34,6 @@ def message():
     if 'help' in text:
         return jsonify({'reply': 'Commands:\n- `.tagall` to tag everyone\n- `hello` or `hi` for greetings'})
 
-    return jsonify({'reply': f'You said: {text}'})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3000)
