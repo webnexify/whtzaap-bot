@@ -25,6 +25,7 @@ def message():
     if is_group and text == '.tagall':
         if sender not in admins:
             return jsonify({'reply': '🚫 Only *group admins* can use `.tagall`.'})
+
         mention_text = '👥 Tagging all:\n' + ' '.join([f'@{p.split("@")[0]}' for p in participants])
         return jsonify({'reply': mention_text, 'mentions': participants})
 
@@ -34,7 +35,7 @@ def message():
 
     # ✅ Help command
     if 'help' in text:
-        return jsonify({'reply': '📋 Commands:\n• `.tagall`(admin only) \n• `hello` or `hi` to greet'})
+        return jsonify({'reply': '📋 Commands:\n• `.tagall` (admin only)\n• `hello` or `hi` to greet'})
 
 
 if __name__ == '__main__':
