@@ -148,7 +148,7 @@ def message():
                     now = datetime.datetime.now()
                     active_threshold = now - timedelta(hours=12)
                     active_members = []
-                    mention_text = "😴 No one is active right now. Maybe ping later!" # Initialize mention_text
+                    mention_text = "😴 No one is active right now. Maybe playing later!" # Initialize mention_text
                     for p in participants:
                         pid = p.split('@')[0]
                         last_seen = user_activity.get(pid)
@@ -165,7 +165,7 @@ def message():
                     })
 
     # ✅ 15. Friendly sticker trigger
-    if is_group and data.get('type') == 'sticker':
+    if is_group and data.get('type') == 'sticker' and 'friendly' in data.get('text', '').lower():
         now = datetime.datetime.now()
         active_threshold = now - timedelta(hours=12)
 
