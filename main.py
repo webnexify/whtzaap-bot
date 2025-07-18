@@ -11,47 +11,43 @@ def message():
     data = request.get_json()
 
     from_id = data.get('from')
-    text = data.get('text', '').strip().lower()
+    text = data.get('text', '').strip().lower() if data.get('text') else ''
     is_group = data.get('isGroup', False)
     participants = data.get('participants', [])
     admins = data.get('admins', [])
     sender = data.get('sender')
-    joined = data.get('joined', [])  # ✅ NEW: list of new member IDs if someone joined
+    joined = data.get('joined', [])
 
-    if not from_id:
-        return jsonify({'reply': None})
-
-    # ✅ Welcome Message if someone joined
+    # ✅ 1. Welcome message for new members
     if is_group and joined:
-        mentions = joined
-        welcome_text = '🎉 Welcome ' + ' '.join([f'@{u.split("@")[0]}' for u in joined])
-        return jsonify({'reply': welcome_text, 'mentions': mentions})
+        mention_text = '👋 Welcome:\n' + ' '.join([f'@{p.split("@")[0]}' for p in joined])
+        return jsonify({'reply': mention_text, 'mentions': joined})
 
-    if not text:
-        return jsonify({'reply': None})
-
-    # ✅ .tagall command
+    # ✅ 2. .tagall for admins
     if is_group and text == '.tagall':
         if sender not in admins:
             return jsonify({'reply': '🚫 Only *group admins* can use `.tagall`.'})
-
         mention_text = '👥 Tagging all:\n' + ' '.join([f'@{p.split("@")[0]}' for p in participants])
         return jsonify({'reply': mention_text, 'mentions': participants})
 
-    # ✅ .online command (non-admin)
+    # ✅ 3. .online for SCN members only
     if is_group and text == '.online':
-        mention_text = '✅ Online:\n' + ' '.join([f'@{p.split("@")[0]}' for p in participants])
-        return jsonify({'reply': mention_text, 'mentions': participants})
+        scn_members = [p for p in participants if 'scn' in p.lower()]
+        if not scn_members:
+            return jsonify({'reply': '⚠️ No SCN members found online.'})
+        mention_text = '🟢 Online SCN members:\n' + ' '.join([f'@{p.split("@")[0]}' for p in scn_members])
+        return jsonify({'reply': mention_text, 'mentions': scn_members})
 
-    # ✅ Greetings
+    # ✅ 4. Greetings
     if 'hi' in text or 'hello' in text:
         return jsonify({'reply': '👋 Hello there!'})
 
-    # ✅ Help
+    # ✅ 5. Help
     if 'help' in text:
-        return jsonify({'reply': '📋 Commands:\n• `.tagall` (admin only)\n• `.online`\n• `hello` or `hi`'})
+        return jsonify({'reply': '📋 Commands:\n• `.tagall` (admin only)\n• `hello` or `hi`\n• `.online` to tag SCN members'})
 
     return jsonify({'reply': None})
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3000)
