@@ -25,7 +25,8 @@ def message():
 
     # ✅ Update activity timestamp
     if is_group and sender:
-        user_activity[sender] = datetime.now()
+        user_activity[sender] = datetime.now()  # uses regular spaces (good)
+
 
 # ✅ 1. Welcome message with group rules and admin mentions
     if is_group and joined:
