@@ -30,19 +30,13 @@ def message():
         mention_text = '👥 Tagging all:\n' + ' '.join([f'@{p.split("@")[0]}' for p in participants])
         return jsonify({'reply': mention_text, 'mentions': participants})
 
-    # ✅ 3. .online for SCN members only
-    if is_group and text == '.online':
-        scn_members = [p for p in participants if 'scn' in p.lower()]
-        if not scn_members:
-            return jsonify({'reply': '⚠️ No SCN members found online.'})
-        mention_text = '🟢 Online SCN members:\n' + ' '.join([f'@{p.split("@")[0]}' for p in scn_members])
-        return jsonify({'reply': mention_text, 'mentions': scn_members})
+   
 
-    # ✅ 4. Greetings
+    # ✅ 3. Greetings
     if 'hi' in text or 'hello' in text:
         return jsonify({'reply': '👋 Hello there!'})
 
-    # ✅ 5. Help
+    # ✅ 4. Help
     if 'help' in text:
         return jsonify({'reply': '📋 Commands:\n• `.tagall` (admin only)\n• `hello` or `hi`\n• `.online` to tag SCN members'})
 
