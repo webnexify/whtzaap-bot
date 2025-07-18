@@ -165,32 +165,35 @@ def message():
                     })
 
     # ✅ 15. Friendly sticker trigger
-    if is_group and data.get('type') == 'sticker' and 'friendly' in data.get('text', '').lower():
-        now = datetime.datetime.now()
-        active_threshold = now - timedelta(hours=12)
+    # ✅ Detect friendly sticker (based on caption or alt text)
+    if is_group and data.get('type') == 'sticker':
+        sticker_text = data.get('caption', '').lower()  # or try 'stickerText' if caption doesn't work
 
-        active_members = []
-        for p in participants:
-            pid = p.split('@')[0]
-            last_seen = user_activity.get(pid)
-            if last_seen and last_seen >= active_threshold and p != sender:
-                active_members.append(p)
+        if 'friendly' in sticker_text:
+            now = datetime.datetime.now()
+            active_threshold = now - timedelta(hours=12)
 
-        if active_members:
-            mention_text = (
-                "🎮 A friendly sticker? Let’s vibe!\n\n"
-                "🔥 Active friends online: " + ' '.join([f'@{p.split("@")[0]}' for p in active_members])
-            )
-        else:
-            mention_text = "😴 No one is active now to vibe with your sticker..."
+            active_members = []
+            for p in participants:
+                pid = p.split('@')[0]
+                last_seen = user_activity.get(pid)
+                if last_seen and last_seen >= active_threshold and p != sender:
+                    active_members.append(p)
 
-        return jsonify({
-            'reply': mention_text,
-            'mentions': active_members
-        })
+            if active_members:
+                mention_text = (
+                    "🎮 A friendly sticker? Let’s vibe!\n\n"
+                    "🔥 Active friends online: " + ' '.join([f'@{p.split("@")[0]}' for p in active_members])
+                )
+            else:
+                mention_text = "😴 No one is active now to vibe with your sticker..."
 
+            return jsonify({
+                'reply': mention_text,
+                'mentions': active_members
+            })
 
-    # ✅ 15. Help
+    # ✅ 16. Help
     if 'help' in text:
         return jsonify({'reply': '📋 Commands:\n• `tagall`\n• `groupinfo`\n• `admins`\n• `owner`\n• `.rules`\n• `hello` or `hi`\n• `mrng` or `good morning`\n• `bot`\n• `who are you`\n• `.champion`\n• `activity`\n• `friendly anyone` or `anyone friendly`'})
 
