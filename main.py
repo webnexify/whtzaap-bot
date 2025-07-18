@@ -2,6 +2,16 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
+BOT_NAME = "💖 BellaBot"
+
+GIRLY_INTRO_RESPONSES = [
+    f"{BOT_NAME} here! Your fabulous digital bestie 💅",
+    f"I'm {BOT_NAME} — cooler than your ex and smarter than your crush 😘",
+    f"{BOT_NAME} at your service, sugar ✨",
+    f"Did someone call {BOT_NAME}? Time to slay 💃",
+    f"{BOT_NAME}: Serving attitude and automation 👑"
+]
+
 @app.route('/')
 def home():
     return '✅ WhatsApp Bot is running'
@@ -20,7 +30,7 @@ def message():
 
     # ✅ 1. Welcome message
     if is_group and joined:
-        mention_text = '👋 Welcome:\n' + ' '.join([f'@{p.split("@")[0]}' for p in joined])
+        mention_text = '👋 Welcome our fam:\n' + ' '.join([f'@{p.split("@")[0]}' for p in joined])
         return jsonify({'reply': mention_text, 'mentions': joined})
 
     # ✅ 2. .tagall
@@ -57,9 +67,25 @@ def message():
     if 'hi' in text or 'hello' in text:
         return jsonify({'reply': '👋 Hello there!'})
 
-    # ✅ 8. Help
+    # ✅ 8. Morning greeting (mention only sender)
+    if 'mng' in text or 'good morning' in text:
+            mention_text = f'☀️ Morning @{sender.split("@")[0]}! Wake up, check memes, ignore responsibilities. Repeat.'
+            return jsonify({
+                'reply': mention_text,
+                'mentions': [sender]
+            })
+
+    # ✅ 9. bot or who are you
+    if text in ['bot', 'hey bella']:
+        return jsonify({
+            'reply': random.choice(GIRLY_INTRO_RESPONSES),
+            'mentions': [sender]
+        })
+
+
+    # ✅ 10. Help
     if 'help' in text:
-        return jsonify({'reply': '📋 Commands:\n• `.tagall`\n• `.groupinfo`\n• `.admins`\n• `.owner`\n• `.rules`\n• `hello` or `hi`'})
+        return jsonify({'reply': '📋 Commands:\n• `.tagall`\n• `.groupinfo`\n• `.admins`\n• `.owner`\n• `.rules`\n• `hello` or `hi`\n• `mng` or `good morning`\n• `bot` or `hey bella`'})
 
     return jsonify({'reply': None})
 
