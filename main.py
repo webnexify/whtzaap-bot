@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 import datetime
+from datetime import timedelta
 app = Flask(__name__)
 
 BOT_NAME = "💖Bot"
@@ -106,7 +107,7 @@ def message():
 
     # ✅ 11. activity command – List active/inactive
     if is_group and text == 'activity':
-        now = datetime.now()
+        now = datetime.datetime.now()
         active_threshold = now - timedelta(days=7)  # 👈 You can change to hours=12 or days=1, etc.
 
         active_members = []
