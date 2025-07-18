@@ -169,7 +169,7 @@ def message():
     if is_group and data.get('type') == 'sticker':
         sticker_text = data.get('caption', '').lower()  # or try 'stickerText' if caption doesn't work
 
-        if 'friendly' in sticker_text:
+        if 'friendly anyone' or 'anyone friendly' or 'friendly' in sticker_text:
             now = datetime.datetime.now()
             active_threshold = now - timedelta(hours=12)
 
