@@ -166,7 +166,7 @@ def message():
 
     # ✅ 15. Friendly-sticker trigger: Only when sticker text includes "friendly"
     if is_group and data.get('type') == 'sticker':
-        sticker_text = data.get('caption', '').lower()  # This works if your stickers have alt/caption text
+        sticker_text = data.get('sticker_text', '').lower()  # This works if your stickers have alt/caption text
 
         # Only respond if sticker includes keywords like "friendly"
         if any(kw in sticker_text for kw in ['friendly', 'anyone friendly', 'friendly anyone']):
