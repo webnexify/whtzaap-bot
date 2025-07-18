@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-BOT_NAME = "💖 BellaBot"
+BOT_NAME = "💖Bot"
 
 GIRLY_INTRO_RESPONSES = [
     f"{BOT_NAME} here! Your fabulous digital bestie 💅",
