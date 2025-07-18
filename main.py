@@ -1,6 +1,5 @@
-import random
 from flask import Flask, request, jsonify
-
+import datetime
 app = Flask(__name__)
 
 BOT_NAME = "💖Bot"
@@ -25,7 +24,7 @@ def message():
 
     # ✅ Update activity timestamp
     if is_group and sender:
-        user_activity[sender] = datetime.now()  # uses regular spaces (good)
+        user_activity[sender] = datetime.datetime.now()  # uses regular spaces (good)
 
 
 # ✅ 1. Welcome message with group rules and admin mentions
