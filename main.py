@@ -97,7 +97,7 @@ def message():
     # ✅ 11. activity
     if is_group and text == 'activity':
             now = datetime.datetime.now()
-            active_threshold = now - timedelta(days=30)  # 30-day activity check
+            active_threshold = now - timedelta()  # 30-day activity check
 
             active_members = []
             inactive_members = []
@@ -111,7 +111,7 @@ def message():
                 else:
                     inactive_members.append(p)
 
-            active_text = '✅ Active Members (last 30 days):\n' + (
+            active_text = '✅ Active Members :\n' + (
                 '\n'.join([f'@{p.split("@")[0]}' for p in active_members]) if active_members else 'No one is active 💤'
             )
             inactive_text = '\n\n⚠ Inactive Members:\n' + (
@@ -156,7 +156,7 @@ def message():
         user_activity[sender_id] = datetime.datetime.now()
 
     # ✅ 14. FRIENDLY ANYONE TRIGGER
-    if is_group and 'friendly anyone' in text:
+    if is_group and 'friendly anyone' in text or 'anyone friendly' in text:
         now = datetime.datetime.now()
         active_threshold = now - timedelta(hours=12)
 
