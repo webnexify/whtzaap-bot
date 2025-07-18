@@ -30,15 +30,13 @@ def message():
         mention_text = '👥 Tagging all:\n' + ' '.join([f'@{p.split("@")[0]}' for p in participants])
         return jsonify({'reply': mention_text, 'mentions': participants})
 
-   
-
     # ✅ 3. Greetings
     if 'hi' in text or 'hello' in text:
         return jsonify({'reply': '👋 Hello there!'})
 
     # ✅ 4. Help
     if 'help' in text:
-        return jsonify({'reply': '📋 Commands:\n• `.tagall` (admin only)\n• `hello` or `hi`\n• `.online` to tag SCN members'})
+        return jsonify({'reply': '📋 Commands:\n• `.tagall` (admin only)\n• `hello` or `hi`'})
 
     return jsonify({'reply': None})
 
