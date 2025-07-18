@@ -25,11 +25,6 @@ def message():
     sender = data.get('sender')
     joined = data.get('joined', [])
 
-    # ✅ Track user activity
-    if is_group and sender:
-        sender_id = sender.split('@')[0]
-        user_activity[sender_id] = datetime.datetime.now()
-
     # ✅ 1. Welcome message with rules & admin mentions
     if is_group and joined:
         mention_text = '👋 Welcome to our fam:\n' + ' '.join([f'@{p.split("@")[0]}' for p in joined])
@@ -94,33 +89,40 @@ def message():
     if text == 'who are you':
         return jsonify({'reply': f"I'm {BOT_NAME} — cooler than your ex and smarter than your crush 😘", 'mentions': [sender]})
 
+    # ✅ Track user activity
+    if is_group and sender:
+            sender_id = sender.split('@')[0]  # Remove '@s.whatsapp.net'
+            user_activity[sender_id] = datetime.datetime.now()
+
     # ✅ 11. activity
     if is_group and text == 'activity':
-        now = datetime.datetime.now()
-        active_threshold = now - timedelta(days=30)
+            now = datetime.datetime.now()
+            active_threshold = now - timedelta(days=30)  # 30-day activity check
 
-        active_members = []
-        inactive_members = []
+            active_members = []
+            inactive_members = []
 
-        for p in participants:
-            pid = p.split('@')[0]
-            last_seen = user_activity.get(pid)
-            if last_seen and last_seen >= active_threshold:
-                active_members.append(p)
-            else:
-                inactive_members.append(p)
+            for p in participants:
+                pid = p.split('@')[0]  # normalize participant ID
+                last_seen = user_activity.get(pid)
 
-        active_text = '✅ Active Members (last 30 days):\n' + (
-            '\n'.join([f'@{p.split("@")[0]}' for p in active_members]) if active_members else 'No one is active 💤'
-        )
-        inactive_text = '\n\n⚠ Inactive Members:\n' + (
-            '\n'.join([f'@{p.split("@")[0]}' for p in inactive_members]) if inactive_members else 'All members are active 🎉'
-        )
+                if last_seen and last_seen >= active_threshold:
+                    active_members.append(p)
+                else:
+                    inactive_members.append(p)
 
-        return jsonify({
-            'reply': active_text + inactive_text,
-            'mentions': active_members + inactive_members
-        })
+            active_text = '✅ Active Members (last 30 days):\n' + (
+                '\n'.join([f'@{p.split("@")[0]}' for p in active_members]) if active_members else 'No one is active 💤'
+            )
+            inactive_text = '\n\n⚠ Inactive Members:\n' + (
+                '\n'.join([f'@{p.split("@")[0]}' for p in inactive_members]) if inactive_members else 'All members are active 🎉'
+            )
+
+            return jsonify({
+                'reply': active_text + inactive_text,
+                'mentions': active_members + inactive_members
+            })
+
 
     # ✅ 12. .champion – Hall of Fame
     if is_group and text == '.champion':
