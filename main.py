@@ -5,13 +5,6 @@ app = Flask(__name__)
 
 BOT_NAME = "💖Bot"
 
-GIRLY_INTRO_RESPONSES = [
-    f"{BOT_NAME} here! Your fabulous digital bestie 💅",
-    f"I'm {BOT_NAME} — cooler than your ex and smarter than your crush 😘",
-    #f"{BOT_NAME} at your service, sugar ✨",
-    #f"Did someone call {BOT_NAME}? Time to slay 💃",
-    f"{BOT_NAME}: Serving attitude and automation 👑"
-]
 
 @app.route('/')
 def home():
@@ -29,10 +22,26 @@ def message():
     sender = data.get('sender')
     joined = data.get('joined', [])
 
-    # ✅ 1. Welcome message
+# ✅ 1. Welcome message with group rules and admin mentions
     if is_group and joined:
-        mention_text = '👋 Welcome our fam:\n' + ' '.join([f'@{p.split("@")[0]}' for p in joined])
-        return jsonify({'reply': mention_text, 'mentions': joined})
+            mention_text = '👋 Welcome to our fam:\n' + ' '.join([f'@{p.split("@")[0]}' for p in joined])
+        # Mention all admins
+            admin_mentions = ' '.join([f'@{a.split("@")[0]}' for a in admins])
+
+            rules = (
+                '\n\n📜 *Group Rules:*\n'
+                '1. Be respectful to everyone 🙏\n'
+                '2. No spamming 🚫\n'
+                '3. Keep conversations on topic 💬\n'
+                '4. No offensive content ❌\n'
+                f'5. Follow the admins 🛡️ {admin_mentions}'
+            )
+
+            return jsonify({
+                'reply': mention_text + rules,
+                'mentions': joined + admins
+            })
+
 
     # ✅ 2. .tagall
     if is_group and text == '.tagall':
@@ -76,17 +85,24 @@ def message():
                 'mentions': [sender]
             })
 
-    # ✅ 9. bot or who are you
-    if text in ['bot', 'hey bot']:
+    # ✅ 9. bot command
+    if text == 'bot':
         return jsonify({
-            'reply': random.choice(GIRLY_INTRO_RESPONSES),
+            'reply': f"I am here! Your fabulous digital bestie 💅",
+            'mentions': [sender]
+        })
+
+    # ✅ 10. who are you command
+    if text == 'who are you':
+        return jsonify({
+            'reply': f"I'm {BOT_NAME} — cooler than your ex and smarter than your crush 😘",
             'mentions': [sender]
         })
 
 
-    # ✅ 10. Help
+    # ✅ 11. Help
     if 'help' in text:
-        return jsonify({'reply': '📋 Commands:\n• `.tagall`\n• `.groupinfo`\n• `.admins`\n• `.owner`\n• `.rules`\n• `hello` or `hi`\n• `mrng` or `good morning`\n• `bot` or `hey bot`'})
+        return jsonify({'reply': '📋 Commands:\n• `.tagall`\n• `.groupinfo`\n• `.admins`\n• `.owner`\n• `.rules`\n• `hello` or `hi`\n• `mrng` or `good morning`\n• `bot`\n• `who are you`'})
 
     return jsonify({'reply': None})
 
