@@ -68,7 +68,7 @@ def message():
         return jsonify({'reply': '👋 Hello there!'})
 
     # ✅ 8. Morning greeting (mention only sender)
-    if 'mng' in text or 'good morning' in text:
+    if 'mrng' in text or 'good morning' in text:
             mention_text = f'☀️ Morning @{sender.split("@")[0]}! Wake up, check memes, ignore responsibilities. Repeat.'
             return jsonify({
                 'reply': mention_text,
@@ -76,7 +76,7 @@ def message():
             })
 
     # ✅ 9. bot or who are you
-    if text in ['bot', 'hey bella']:
+    if text in ['bot', 'hey bot']:
         return jsonify({
             'reply': random.choice(GIRLY_INTRO_RESPONSES),
             'mentions': [sender]
@@ -85,7 +85,7 @@ def message():
 
     # ✅ 10. Help
     if 'help' in text:
-        return jsonify({'reply': '📋 Commands:\n• `.tagall`\n• `.groupinfo`\n• `.admins`\n• `.owner`\n• `.rules`\n• `hello` or `hi`\n• `mng` or `good morning`\n• `bot` or `hey bella`'})
+        return jsonify({'reply': '📋 Commands:\n• `.tagall`\n• `.groupinfo`\n• `.admins`\n• `.owner`\n• `.rules`\n• `hello` or `hi`\n• `mrng` or `good morning`\n• `bot` or `hey bot`'})
 
     return jsonify({'reply': None})
 
