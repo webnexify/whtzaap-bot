@@ -73,24 +73,21 @@ def message():
     if is_group and text == '.rules':
         return jsonify({'reply': '📜 Group Rules:\n1. Be respectful\n2. No spamming\n3. Follow admin instructions\n4. No unrelated content'})
 
-    # ✅ 7. Greetings
-    if 'hi' in text or 'hello' in text:
-        return jsonify({'reply': '👋 Hello there!'})
 
-    # ✅ 8. Morning greeting
+    # ✅ 7. Morning greeting
     if 'mrng' in text or 'good morning' in text:
         mention_text = f'☀️ Morning @{sender.split("@")[0]}! Wake up, check memes, ignore responsibilities. Repeat.'
         return jsonify({'reply': mention_text, 'mentions': [sender]})
 
-    # ✅ 9. bot command
+    # ✅ 8. bot command
     if text == 'bot':
         return jsonify({'reply': f"I am here! Your fabulous digital bestie 💅", 'mentions': [sender]})
 
-    # ✅ 10. who are you
+    # ✅ 9. who are you
     if text == 'who are you':
         return jsonify({'reply': f"I'm {BOT_NAME} — cooler than your ex and smarter than your crush 😘", 'mentions': [sender]})
 
-    # ✅ Track user activity
+    # ✅ 10. Track user activity
     if is_group and sender:
             sender_id = sender.split('@')[0]
             user_activity[sender_id] = datetime.datetime.now()
@@ -205,9 +202,9 @@ def message():
             })
 
 
-    # ✅ 16. Help
+    # ✅ 17. Help
     if 'help' in text:
-        return jsonify({'reply': '📋 Commands:\n• `tagall`\n• `groupinfo`\n• `admins`\n• `owner`\n• `.rules`\n• `hello` or `hi`\n• `mrng` or `good morning`\n• `bot`\n• `who are you`\n• `.champion`\n• `activity`\n• `friendly anyone` or `anyone friendly` or `friendly`'})
+        return jsonify({'reply': '📋 Commands:\n• `tagall`\n• `groupinfo`\n• `admins`\n• `owner`\n• `.rules`\n• `mrng` or `good morning`\n• `bot`\n• `who are you`\n• `.champion`\n• `activity`\n• `friendly anyone` or `anyone friendly` or `friendly`'})
 
     return jsonify({'reply': None})
 
