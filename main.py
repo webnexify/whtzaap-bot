@@ -145,7 +145,7 @@ def message():
         user_activity[sender_id] = datetime.datetime.now()
     
     # ✅ 14. FRIENDLY ANYONE TRIGGER
-    if is_group and ('friendly anyone' in text or 'anyone friendly' in text):
+    if is_group and ('friendly anyone' in text or 'anyone friendly' in text or 'friendly' in text):
                     now = datetime.datetime.now()
                     active_threshold = now - timedelta(hours=12)
                     active_members = []
@@ -207,7 +207,7 @@ def message():
 
     # ✅ 16. Help
     if 'help' in text:
-        return jsonify({'reply': '📋 Commands:\n• `tagall`\n• `groupinfo`\n• `admins`\n• `owner`\n• `.rules`\n• `hello` or `hi`\n• `mrng` or `good morning`\n• `bot`\n• `who are you`\n• `.champion`\n• `activity`\n• `friendly anyone` or `anyone friendly`'})
+        return jsonify({'reply': '📋 Commands:\n• `tagall`\n• `groupinfo`\n• `admins`\n• `owner`\n• `.rules`\n• `hello` or `hi`\n• `mrng` or `good morning`\n• `bot`\n• `who are you`\n• `.champion`\n• `activity`\n• `friendly anyone` or `anyone friendly` or `friendly`'})
 
     return jsonify({'reply': None})
 
