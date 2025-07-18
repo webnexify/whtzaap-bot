@@ -8,8 +8,8 @@ BOT_NAME = "💖Bot"
 GIRLY_INTRO_RESPONSES = [
     f"{BOT_NAME} here! Your fabulous digital bestie 💅",
     f"I'm {BOT_NAME} — cooler than your ex and smarter than your crush 😘",
-    f"{BOT_NAME} at your service, sugar ✨",
-    f"Did someone call {BOT_NAME}? Time to slay 💃",
+    #f"{BOT_NAME} at your service, sugar ✨",
+    #f"Did someone call {BOT_NAME}? Time to slay 💃",
     f"{BOT_NAME}: Serving attitude and automation 👑"
 ]
 
