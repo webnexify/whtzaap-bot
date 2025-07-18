@@ -97,7 +97,7 @@ def message():
     # ✅ 11. activity
     if is_group and text == 'activity':
         now = datetime.datetime.now()
-        active_threshold = now - timedelta(days=2)
+        active_threshold = now - timedelta(days=30)
 
         active_members = []
         inactive_members = []
@@ -110,7 +110,7 @@ def message():
             else:
                 inactive_members.append(p)
 
-        active_text = '✅ Active Members (last 2 days):\n' + (
+        active_text = '✅ Active Members (last 30 days):\n' + (
             '\n'.join([f'@{p.split("@")[0]}' for p in active_members]) if active_members else 'No one is active 💤'
         )
         inactive_text = '\n\n⚠ Inactive Members:\n' + (
@@ -148,9 +148,38 @@ def message():
         )
         return jsonify({'reply': hof_message})
 
-    # ✅ 13. Help
+    # ✅ 13. Track user activity on all group messages
+    if is_group and sender:
+        sender_id = sender.split('@')[0]
+        user_activity[sender_id] = datetime.now()
+
+    # ✅ 14. FRIENDLY ANYONE TRIGGER
+    if is_group and 'friendly anyone' in text:
+        now = datetime.datetime.now()
+        active_threshold = now - timedelta(hours=12)
+
+        active_members = []
+        for p in participants:
+            pid = p.split('@')[0]
+            last_seen = user_activity.get(pid)
+            if last_seen and last_seen >= active_threshold:
+                active_members.append(p)
+
+        mention_text = (
+            "🎮 Let’s get friendly! Who’s up for a match or game?\n\n"
+            "🔥 Active players: " +
+            (' '.join([f'@{p.split("@")[0]}' for p in active_members]) if active_members else '😴 Nobody active right now… Wake them up! 🔔')
+        )
+
+        return jsonify({
+            'reply': mention_text,
+            'mentions': active_members
+        })
+
+
+    # ✅ 15. Help
     if 'help' in text:
-        return jsonify({'reply': '📋 Commands:\n• `tagall`\n• `groupinfo`\n• `admins`\n• `owner`\n• `.rules`\n• `hello` or `hi`\n• `mrng` or `good morning`\n• `bot`\n• `who are you`\n• `.champion`\n• `activity`'})
+        return jsonify({'reply': '📋 Commands:\n• `tagall`\n• `groupinfo`\n• `admins`\n• `owner`\n• `.rules`\n• `hello` or `hi`\n• `mrng` or `good morning`\n• `bot`\n• `who are you`\n• `.champion`\n• `activity`\n• `friendly anyone`'})
 
     return jsonify({'reply': None})
 
