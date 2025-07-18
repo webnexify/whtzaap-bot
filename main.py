@@ -193,7 +193,7 @@ def message():
 
     # ✅ 15. Help
     if 'help' in text:
-        return jsonify({'reply': '📋 Commands:\n• `tagall`\n• `groupinfo`\n• `admins`\n• `owner`\n• `.rules`\n• `hello` or `hi`\n• `mrng` or `good morning`\n• `bot`\n• `who are you`\n• `.champion`\n• `activity`\n• `friendly anyone`'})
+        return jsonify({'reply': '📋 Commands:\n• `tagall`\n• `groupinfo`\n• `admins`\n• `owner`\n• `.rules`\n• `hello` or `hi`\n• `mrng` or `good morning`\n• `bot`\n• `who are you`\n• `.champion`\n• `activity`\n• `friendly anyone` or `anyone friendly`'})
 
     return jsonify({'reply': None})
 
