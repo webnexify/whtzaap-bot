@@ -151,7 +151,7 @@ def message():
     # ✅ 13. Track user activity on all group messages
     if is_group and sender:
         sender_id = sender.split('@')[0]
-        user_activity[sender_id] = datetime.now()
+        user_activity[sender_id] = datetime.datetime.now()
 
     # ✅ 14. FRIENDLY ANYONE TRIGGER
     if is_group and 'friendly anyone' in text:
