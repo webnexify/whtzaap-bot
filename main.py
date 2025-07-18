@@ -1,4 +1,3 @@
-# Flask app.py – already complete
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
@@ -21,7 +20,6 @@ def message():
     if not from_id or not text:
         return jsonify({'reply': None})
 
-    # ✅ Handle .tagall (admin-only)
     if is_group and text == '.tagall':
         if sender not in admins:
             return jsonify({'reply': '🚫 Only *group admins* can use `.tagall`.'})
@@ -29,14 +27,13 @@ def message():
         mention_text = '👥 Tagging all:\n' + ' '.join([f'@{p.split("@")[0]}' for p in participants])
         return jsonify({'reply': mention_text, 'mentions': participants})
 
-    # ✅ Greetings
     if 'hi' in text or 'hello' in text:
         return jsonify({'reply': '👋 Hello there!'})
 
-    # ✅ Help command
     if 'help' in text:
         return jsonify({'reply': '📋 Commands:\n• `.tagall` (admin only)\n• `hello` or `hi` to greet'})
 
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3000)
+
