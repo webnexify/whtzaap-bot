@@ -91,38 +91,26 @@ def message():
 
     # ✅ Track user activity
     if is_group and sender:
-            sender_id = sender.split('@')[0]  # Remove '@s.whatsapp.net'
+            sender_id = sender.split('@')[0]
             user_activity[sender_id] = datetime.datetime.now()
 
     # ✅ 11. activity
     if is_group and text == 'activity':
-            now = datetime.datetime.now()
-            active_threshold = now - timedelta()  # 30-day activity check
-
             active_members = []
-            inactive_members = []
 
             for p in participants:
                 pid = p.split('@')[0]  # normalize participant ID
-                last_seen = user_activity.get(pid)
-
-                if last_seen and last_seen >= active_threshold:
+                if user_activity.get(pid):
                     active_members.append(p)
-                else:
-                    inactive_members.append(p)
 
-            active_text = '✅ Active Members :\n' + (
-                '\n'.join([f'@{p.split("@")[0]}' for p in active_members]) if active_members else 'No one is active 💤'
-            )
-            inactive_text = '\n\n⚠ Inactive Members:\n' + (
-                '\n'.join([f'@{p.split("@")[0]}' for p in inactive_members]) if inactive_members else 'All members are active 🎉'
+            active_text = 'Active Members:\n' + (
+                '\n'.join([f'@{p.split("@")[0]}' for p in active_members]) if active_members else 'No one has been active yet 💤'
             )
 
             return jsonify({
-                'reply': active_text + inactive_text,
-                'mentions': active_members + inactive_members
+                'reply': active_text,
+                'mentions': active_members
             })
-
 
     # ✅ 12. .champion – Hall of Fame
     if is_group and text == '.champion':
@@ -177,6 +165,30 @@ def message():
             'reply': mention_text,
             'mentions': active_members
         })
+
+    # ✅ 15. Friendly sticker trigger
+    if is_group and data.get('type') == 'sticker':
+        now = datetime.datetime.now()
+        active_threshold = now - timedelta(hours=12)
+
+        active_members = []
+        for p in participants:
+            pid = p.split('@')[0]
+            last_seen = user_activity.get(pid)
+            if last_seen and last_seen >= active_threshold:
+                active_members.append(p)
+
+        mention_text = (
+            "🎮 A friendly sticker? Let’s vibe!\n\n"
+            "🔥 Active friends online: " +
+            (' '.join([f'@{p.split("@")[0]}' for p in active_members]) if active_members else '😴 Everyone’s chilling silently...')
+        )
+
+        return jsonify({
+            'reply': mention_text,
+            'mentions': active_members
+        })
+
 
 
     # ✅ 15. Help
