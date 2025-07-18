@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 
 BOT_NAME = "💖Bot"
+user_activity = {}  # user_id -> last_active_time
 
 
 @app.route('/')
@@ -21,6 +22,10 @@ def message():
     admins = data.get('admins', [])
     sender = data.get('sender')
     joined = data.get('joined', [])
+
+    # ✅ Update activity timestamp
+    if is_group and sender:
+        user_activity[sender] = datetime.now()
 
 # ✅ 1. Welcome message with group rules and admin mentions
     if is_group and joined:
@@ -43,33 +48,33 @@ def message():
             })
 
 
-    # ✅ 2. .tagall
-    if is_group and text == '.tagall':
+    # ✅ 2. tagall
+    if is_group and text == 'tagall':
         if sender not in admins:
             return jsonify({'reply': '🚫 Only *group admins* can use `.tagall`.'})
         mention_text = '👥 Tagging all:\n' + ' '.join([f'@{p.split("@")[0]}' for p in participants])
         return jsonify({'reply': mention_text, 'mentions': participants})
 
-    # ✅ 3. .groupinfo
-    if is_group and text == '.groupinfo':
+    # ✅ 3. groupinfo
+    if is_group and text == 'groupinfo':
         group_size = len(participants)
         admin_count = len(admins)
         return jsonify({'reply': f'📊 Group Info:\n• Members: {group_size}\n• Admins: {admin_count}'})
 
-    # ✅ 4. .admins
-    if is_group and text == '.admins':
+    # ✅ 4. admins
+    if is_group and text == 'admins':
         mention_text = '🛡️ Admins:\n' + ' '.join([f'@{p.split("@")[0]}' for p in admins])
         return jsonify({'reply': mention_text, 'mentions': admins})
 
-    # ✅ 5. .owner
-    if is_group and text == '.owner':
+    # ✅ 5. owner
+    if is_group and text == 'owner':
         owner = admins[0] if admins else None
         if owner:
             return jsonify({'reply': f'👑 Group Owner: @{owner.split("@")[0]}', 'mentions': [owner]})
         else:
             return jsonify({'reply': '⚠️ No owner info available.'})
 
-    # ✅ 6. .rules
+    # ✅ 6. rules
     if is_group and text == '.rules':
         return jsonify({'reply': '📜 Group Rules:\n1. Be respectful\n2. No spamming\n3. Follow admin instructions\n4. No unrelated content'})
 
@@ -99,10 +104,66 @@ def message():
             'mentions': [sender]
         })
 
+    # ✅ 11. activity command – List active/inactive
+    if is_group and text == 'activity':
+        now = datetime.now()
+        active_threshold = now - timedelta(days=7)  # 👈 You can change to hours=12 or days=1, etc.
 
-    # ✅ 11. Help
+        active_members = []
+        inactive_members = []
+
+        for p in participants:
+            last_seen = user_activity.get(p)
+            if last_seen and last_seen >= active_threshold:
+                active_members.append(p)
+            else:
+                inactive_members.append(p)
+
+        active_text = '✅ Active Members (last 2 days):\n' + (
+            '\n'.join([f'@{p.split("@")[0]}' for p in active_members]) if active_members else 'No one is active 💤'
+        )
+        inactive_text = '\n\n⚠ Inactive Members:\n' + (
+            '\n'.join([f'@{p.split("@")[0]}' for p in inactive_members]) if inactive_members else 'All members are active 🎉'
+        )
+
+        return jsonify({
+            'reply': active_text + inactive_text,
+            'mentions': active_members + inactive_members
+        })
+
+    # ✅ 12. .champion – Hall of Fame
+    if is_group and text == '.champion':
+        hof_message = (
+            '🎖✨ *MANIACS – OFFICIAL TOURNAMENT HALL OF FAME* ✨🎖\n'
+            '🔥 Where Legends Are Crowned… 🔥\n'
+            '━━━━━━━━━━━━━━━━━━━━━━━\n\n'
+
+            '🔰 🏆 *LEAGUE OF LEGENDS – CHAMPIONS* 🏆 🔰\n'
+            '🎮 Victory isn’t luck — it’s legacy.\n\n'
+            '🥇 Season 1 – *KARTHIK* 🌪\n'
+            '🥇 Season 2 – *MANOJ* 💥\n'
+            '🥇 Season 3 – *MANOJ* ⚔\n'
+            '🥇 Season 4 – *MANOJ* 👑 (Hat-trick King!)\n'
+            '🥇 Season 5 – *HARI* 🔥\n\n'
+            '━━━━━━━━━━━━━━━━━━━━━━━\n\n'
+
+            '🔰 🏆 *MASTER CUP – CHAMPIONS* 🏆 🔰\n'
+            '🎯 The finest of the finest clash here.\n\n'
+            '🥇 Season 1 – *ALBI* 🚀\n'
+            '🥇 Season 2 – *SHARON* 🧊\n\n'
+            '━━━━━━━━━━━━━━━━━━━━━━━\n\n'
+            '👑 *RESPECT THE CHAMPIONS*\n'
+            '📈 Train hard. Think sharp. Stay deadly.\n'
+            '🕹 Next Season Loading… Are *YOU* Ready?\n'
+            '#MANIACS🔥 #LegendsOfManiacs #HallOfFame #GamingGlory'
+        )
+        return jsonify({'reply': hof_message})
+
+
+
+    # ✅ 13. Help
     if 'help' in text:
-        return jsonify({'reply': '📋 Commands:\n• `.tagall`\n• `.groupinfo`\n• `.admins`\n• `.owner`\n• `.rules`\n• `hello` or `hi`\n• `mrng` or `good morning`\n• `bot`\n• `who are you`'})
+        return jsonify({'reply': '📋 Commands:\n• `tagall`\n• `groupinfo`\n• `admins`\n• `owner`\n• `.rules`\n• `hello` or `hi`\n• `mrng` or `good morning`\n• `bot`\n• `who are you`\n• `.champion`\n• `activity`'})
 
     return jsonify({'reply': None})
 
