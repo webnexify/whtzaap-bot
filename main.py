@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import datetime
 from datetime import timedelta
+import re
 
 app = Flask(__name__)
 
@@ -193,6 +194,16 @@ def message():
                 'reply': mention_text,
                 'mentions': active_members
             })
+
+
+    # ✅ 16. Block links if not sent by admin
+    if is_group and re.search(r'https?://', text):  # If message has a link
+        if sender not in admins:
+            return jsonify({
+                'delete': True,  # Tell Baileys to delete the message
+                'reply': '❌ Only admins are allowed to share links.'
+            })
+
 
     # ✅ 16. Help
     if 'help' in text:
