@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import datetime
 from datetime import timedelta
+
 app = Flask(__name__)
 
 BOT_NAME = "💖Bot"
@@ -10,6 +11,7 @@ user_activity = {}  # user_id -> last_active_time
 @app.route('/')
 def home():
     return '✅ WhatsApp Bot is running'
+
 
 @app.route('/message', methods=['POST'])
 def message():
@@ -23,31 +25,27 @@ def message():
     sender = data.get('sender')
     joined = data.get('joined', [])
 
-    # ✅ Update activity timestamp
+    # ✅ Track user activity
     if is_group and sender:
-        user_activity[sender] = datetime.datetime.now()  # uses regular spaces (good)
+        sender_id = sender.split('@')[0]
+        user_activity[sender_id] = datetime.datetime.now()
 
-
-# ✅ 1. Welcome message with group rules and admin mentions
+    # ✅ 1. Welcome message with rules & admin mentions
     if is_group and joined:
-            mention_text = '👋 Welcome to our fam:\n' + ' '.join([f'@{p.split("@")[0]}' for p in joined])
-        # Mention all admins
-            admin_mentions = ' '.join([f'@{a.split("@")[0]}' for a in admins])
-
-            rules = (
-                '\n\n📜 *Group Rules:*\n'
-                '1. Be respectful to everyone 🙏\n'
-                '2. No spamming 🚫\n'
-                '3. Keep conversations on topic 💬\n'
-                '4. No offensive content ❌\n'
-                f'5. Follow the admins 🛡️ {admin_mentions}'
-            )
-
-            return jsonify({
-                'reply': mention_text + rules,
-                'mentions': joined + admins
-            })
-
+        mention_text = '👋 Welcome to our fam:\n' + ' '.join([f'@{p.split("@")[0]}' for p in joined])
+        admin_mentions = ' '.join([f'@{a.split("@")[0]}' for a in admins])
+        rules = (
+            '\n\n📜 *Group Rules:*\n'
+            '1. Be respectful to everyone 🙏\n'
+            '2. No spamming 🚫\n'
+            '3. Keep conversations on topic 💬\n'
+            '4. No offensive content ❌\n'
+            f'5. Follow the admins 🛡️ {admin_mentions}'
+        )
+        return jsonify({
+            'reply': mention_text + rules,
+            'mentions': joined + admins
+        })
 
     # ✅ 2. tagall
     if is_group and text == 'tagall':
@@ -83,38 +81,30 @@ def message():
     if 'hi' in text or 'hello' in text:
         return jsonify({'reply': '👋 Hello there!'})
 
-    # ✅ 8. Morning greeting (mention only sender)
+    # ✅ 8. Morning greeting
     if 'mrng' in text or 'good morning' in text:
-            mention_text = f'☀️ Morning @{sender.split("@")[0]}! Wake up, check memes, ignore responsibilities. Repeat.'
-            return jsonify({
-                'reply': mention_text,
-                'mentions': [sender]
-            })
+        mention_text = f'☀️ Morning @{sender.split("@")[0]}! Wake up, check memes, ignore responsibilities. Repeat.'
+        return jsonify({'reply': mention_text, 'mentions': [sender]})
 
     # ✅ 9. bot command
     if text == 'bot':
-        return jsonify({
-            'reply': f"I am here! Your fabulous digital bestie 💅",
-            'mentions': [sender]
-        })
+        return jsonify({'reply': f"I am here! Your fabulous digital bestie 💅", 'mentions': [sender]})
 
-    # ✅ 10. who are you command
+    # ✅ 10. who are you
     if text == 'who are you':
-        return jsonify({
-            'reply': f"I'm {BOT_NAME} — cooler than your ex and smarter than your crush 😘",
-            'mentions': [sender]
-        })
+        return jsonify({'reply': f"I'm {BOT_NAME} — cooler than your ex and smarter than your crush 😘", 'mentions': [sender]})
 
-    # ✅ 11. activity command – List active/inactive
+    # ✅ 11. activity
     if is_group and text == 'activity':
         now = datetime.datetime.now()
-        active_threshold = now - timedelta(days=7)  # 👈 You can change to hours=12 or days=1, etc.
+        active_threshold = now - timedelta(days=2)
 
         active_members = []
         inactive_members = []
 
         for p in participants:
-            last_seen = user_activity.get(p)
+            pid = p.split('@')[0]
+            last_seen = user_activity.get(pid)
             if last_seen and last_seen >= active_threshold:
                 active_members.append(p)
             else:
@@ -138,7 +128,6 @@ def message():
             '🎖✨ *MANIACS – OFFICIAL TOURNAMENT HALL OF FAME* ✨🎖\n'
             '🔥 Where Legends Are Crowned… 🔥\n'
             '━━━━━━━━━━━━━━━━━━━━━━━\n\n'
-
             '🔰 🏆 *LEAGUE OF LEGENDS – CHAMPIONS* 🏆 🔰\n'
             '🎮 Victory isn’t luck — it’s legacy.\n\n'
             '🥇 Season 1 – *KARTHIK* 🌪\n'
@@ -147,7 +136,6 @@ def message():
             '🥇 Season 4 – *MANOJ* 👑 (Hat-trick King!)\n'
             '🥇 Season 5 – *HARI* 🔥\n\n'
             '━━━━━━━━━━━━━━━━━━━━━━━\n\n'
-
             '🔰 🏆 *MASTER CUP – CHAMPIONS* 🏆 🔰\n'
             '🎯 The finest of the finest clash here.\n\n'
             '🥇 Season 1 – *ALBI* 🚀\n'
@@ -159,8 +147,6 @@ def message():
             '#MANIACS🔥 #LegendsOfManiacs #HallOfFame #GamingGlory'
         )
         return jsonify({'reply': hof_message})
-
-
 
     # ✅ 13. Help
     if 'help' in text:
