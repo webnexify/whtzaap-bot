@@ -45,7 +45,7 @@ def message():
     if is_group and text == '.owner':
         owner = admins[0] if admins else None
         if owner:
-            return jsonify({'reply': '👑 Group Owner:', 'mentions': [owner]})
+            return jsonify({'reply': f'👑 Group Owner: @{owner.split("@")[0]}', 'mentions': [owner]})
         else:
             return jsonify({'reply': '⚠️ No owner info available.'})
 
