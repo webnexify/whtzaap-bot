@@ -1,8 +1,9 @@
 from flask import Flask, request, jsonify
-#from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup
 import datetime
 from datetime import timedelta
 import re
+import requests
 import random
 #from urllib.parse
 from langdetect import detect
@@ -12,6 +13,33 @@ app = Flask(__name__)
 
 BOT_NAME = "💖Bot"
 user_activity = {}
+
+def get_leaderboard_text():
+    try:
+        url = "https://copafacil.com/share/embedded/results/-7j0ro@zw9t/ART/results_4"
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+        }
+        res = requests.get(url, headers=headers)
+        soup = BeautifulSoup(res.text, "html.parser")
+
+        table = soup.find("table")
+        if not table:
+            return "⚠️ No leaderboard found."
+
+        rows = table.find_all("tr")
+        text = "🏆 *Leaderboard*\n\n"
+
+        for row in rows:
+            cols = row.find_all(["td", "th"])
+            line = " | ".join(col.get_text(strip=True) for col in cols)
+            text += line + "\n"
+
+        return text.strip()
+    except Exception as e:
+        return f"❌ Error fetching leaderboard: {str(e)}"
+
+
 
 def is_probably_mizo(text):
     common_mizo_words = ["ka", "chu", "loh", "tih", "chuan", "hriat", "zia", "eng", "awm", "che", "ti", "na", "tur"]
@@ -39,6 +67,7 @@ funny_gg_responses = [
     "🔥 നീയാണ് ഗെയിമിന്റെ മോഹൻലാൽ... മാസ് എൻട്രിയിലൂടെ പൊളിച്ചു ബ്രോ 🎬👑",
     "🎮 അടിപൊളി ക്ലച്ച്... ഫോൺ കിട്ടിയില്ല, vibration കൊണ്ടാണ് പോയി കിട്ടിയത് 😭📱"
 ]
+
 
 # ✅ Only these group IDs allowed to use `.point`
 ALLOWED_GROUPS = [
@@ -246,11 +275,9 @@ def message():
 
     # ✅ 18. Respond to "season6" only in allowed groups
     if is_group and from_id in ALLOWED_GROUPS and text == "season6":
-        return jsonify({
-            "reply": "🏆 Tournament Point Table:\nhttps://www.copafacil.com/-7j0ro@zw9t",
-            "mentions": [],
-            "delete": False
-        })
+        leaderboard = get_leaderboard_text()
+        return jsonify({"reply": leaderboard})
+
 
     # ✅ 19. translate non-English/Malayalam messages
     if not text or not is_group:
@@ -281,7 +308,7 @@ def message():
 
     # ✅ 20. Help
     if 'help' in text:
-        return jsonify({'reply': '📋 Commands:\n• `tagall`\n• `groupinfo`\n• `admins`\n• `owner`\n• `.rules`\n• `mrng` or `good morning`\n• `bot`\n• `who are you`\n• `.champion`\n• `activity`\n• `friendly anyone` or `anyone friendly` or `friendly`\n• `gg`\n• `season6`\n• `hari`'})
+        return jsonify({'reply': '📋 *Bot Commands:*\n\n• `tagall`\n• `groupinfo`\n• `admins`\n• `owner`\n• `.rules`\n• `mrng` or `good morning`\n• `bot`\n• `who are you`\n• `.champion`\n• `activity`\n• `friendly anyone` or `anyone friendly` or `friendly`\n• `gg`\n• `season6`\n• `hari`'})
 
     return jsonify({'reply': None})
 
