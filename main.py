@@ -1,17 +1,16 @@
 from flask import Flask, request, jsonify
-from bs4 import BeautifulSoup
+#from bs4 import BeautifulSoup
 import datetime
 from datetime import timedelta
 import re
-import requests
 import random
+from urllib.parse import urlencode
 
 app = Flask(__name__)
 
 BOT_NAME = "💖Bot"
-user_activity = {}  # user_id -> last_active_time
+user_activity = {}
 
-# ✅ Funny replies without "gg"
 funny_gg_responses = [
     "That move was smoother than butter! 🧈",
     "Is it over already? I blinked! 👀",
@@ -34,27 +33,12 @@ funny_gg_responses = [
     "🔥 നീയാണ് ഗെയിമിന്റെ മോഹൻലാൽ... മാസ് എൻട്രിയിലൂടെ പൊളിച്ചു ബ്രോ 🎬👑",
     "🎮 അടിപൊളി ക്ലച്ച്... ഫോൺ കിട്ടിയില്ല, vibration കൊണ്ടാണ് പോയി കിട്ടിയത് 😭📱"
 ]
-# ✅ Your allowed group IDs (copy them from WhatsApp)
+
+# ✅ Only these group IDs allowed to use `.point`
 ALLOWED_GROUPS = [
     "120363048505746465@g.us",  # MCS
-    "120363419378716476@g.us",  # TESTING"
+    "120363419378716476@g.us",  # TESTING
 ]
-
-def get_leaderboard_image():
-    url = "https://challenge.place/c/620a9e6f8aac547bb479cfd5/stage/63a493ea3b719273d482344a"
-
-    # Example using screenshotmachine (you can also use others)
-    api_url = "https://api.screenshotmachine.com"
-    params = {
-        "key": "YOUR_API_KEY",   # <- Get free API key
-        "url": url,
-        "dimension": "1024xfull",
-        "format": "png",
-    }
-
-    screenshot_url = f"{api_url}?{urlencode(params)}"
-    return screenshot_url
-
 
 @app.route('/')
 def home():
@@ -64,7 +48,6 @@ def home():
 @app.route('/message', methods=['POST'])
 def message():
     data = request.get_json()
-
     from_id = data.get('from')
     text = data.get('text', '').strip().lower() if data.get('text') else ''
     is_group = data.get('isGroup', False)
@@ -253,18 +236,19 @@ def message():
         response_text = random.choice(funny_gg_responses)
         return jsonify({'reply': response_text})
 
-    # ✅ 18. Only respond to 'point' in allowed groups
-    if text == "point" and from_id in allowed_groups:
-        leaderboard_img = get_leaderboard_image()
+    # ✅ 18. Respond to "point" only in allowed groups
+    if is_group and from_id in ALLOWED_GROUPS and text == "season6":
         return jsonify({
-            "image": leaderboard_img,
-            "caption": "🏆 *Current Leaderboard*"
+            "reply": "🏆 Tournament Point Table:\nhttps://www.copafacil.com/-7j0ro@zw9t",
+            "mentions": [],
+            "delete": False
         })
+
        
 
     # ✅ 19. Help
     if 'help' in text:
-        return jsonify({'reply': '📋 Commands:\n• `tagall`\n• `groupinfo`\n• `admins`\n• `owner`\n• `.rules`\n• `mrng` or `good morning`\n• `bot`\n• `who are you`\n• `.champion`\n• `activity`\n• `friendly anyone` or `anyone friendly` or `friendly`\n• `gg`\n• `point`'})
+        return jsonify({'reply': '📋 Commands:\n• `tagall`\n• `groupinfo`\n• `admins`\n• `owner`\n• `.rules`\n• `mrng` or `good morning`\n• `bot`\n• `who are you`\n• `.champion`\n• `activity`\n• `friendly anyone` or `anyone friendly` or `friendly`\n• `gg`\n• `season6`'})
 
     return jsonify({'reply': None})
 
