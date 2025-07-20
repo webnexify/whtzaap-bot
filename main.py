@@ -4,7 +4,7 @@ import datetime
 from datetime import timedelta
 import re
 import random
-from urllib.parse
+#from urllib.parse
 from langdetect import detect
 from deep_translator import GoogleTranslator
 
