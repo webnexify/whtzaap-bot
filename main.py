@@ -249,26 +249,24 @@ def message():
         })
 
     # ✅ 19. translate non-English/Malayalam messages
+    if not text or not is_group:
+        return jsonify({})
 
     try:
-        lang = detect(text)
+        detected_lang = detect(text)
     except:
-        lang = 'unknown'
+        detected_lang = 'unknown'
 
-    # Only translate if not English or Malayalam
-    if is_group and lang not in ["en", "ml"]:
+    # Translate only if the language is Mizo (lus), Hindi (hi), or Arabic (ar)
+    if detected_lang in ["hi", "ar", "lus"]:
         try:
-            # Try translating to Malayalam first
-            translated = GoogleTranslator(source='auto', target='ml').translate(text)
+            translated_text = GoogleTranslator(source=detected_lang, target='en').translate(text)
         except:
-            # If Malayalam fails, fallback to English
-            translated = GoogleTranslator(source='auto', target='en').translate(text)
+            translated_text = GoogleTranslator(source='auto', target='en').translate(text)
 
         return jsonify({
-            "reply": f"🌐 Translation:\n{translated}"
+            "reply": f"🌐 English Translation:\n{translated_text}"
         })
-
-   
 
     # ✅ 20. Help
     if 'help' in text:
