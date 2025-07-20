@@ -246,16 +246,7 @@ def message():
             "delete": False
         })
 
-    # ✅ 18. Respond to "hari" only in allowed groups
-    if is_group and from_id in ALLOWED_GROUPS:
-        if text == "hari":
-            # ✅ Replace this with Hari’s actual WhatsApp ID
-            hari_id = "@~Hari🤟🏼"
-
-            return jsonify({
-                "text": "അണ്ടിക്കോയെ 🍆തോൽപ്പിക്കാൻ ഒരു അണ്ടിക്കും സാധിക്കില്ല എന്ന് പറഞ്ഞുകൊണ്ട് 💪🛑 ഹരി (Andikoya)  🍆 😎🔥🐒👑",
-                "mentions": "@916282995415"
-            })
+   
 
     # ✅ 19. Help
     if 'help' in text:
