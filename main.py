@@ -1,7 +1,9 @@
 from flask import Flask, request, jsonify
+from bs4 import BeautifulSoup
 import datetime
 from datetime import timedelta
 import re
+import requests
 import random
 
 app = Flask(__name__)
@@ -37,6 +39,30 @@ ALLOWED_GROUPS = [
     "120363048505746465@g.us",  # MCS
     "120363419378716476@g.us",  # TESTING"
 ]
+
+def get_leaderboard_text():
+    try:
+        url = "https://www.copafacil.com/-7j0ro@zw9t/leaderboard.html"  # or iframe src URL
+        res = requests.get(url)
+        soup = BeautifulSoup(res.text, "html.parser")
+
+        # Try to find the main table (adjust selector if needed)
+        table = soup.find("table")
+        if not table:
+            return "⚠️ No leaderboard found."
+
+        rows = table.find_all("tr")
+        text = "🏆 *Leaderboard*\n"
+
+        for row in rows:
+            cols = row.find_all(["td", "th"])
+            line = " | ".join(col.get_text(strip=True) for col in cols)
+            text += line + "\n"
+
+        return text.strip()
+    except Exception as e:
+        return f"❌ Error fetching leaderboard: {str(e)}"
+
 
 @app.route('/')
 def home():
@@ -238,7 +264,7 @@ def message():
     # ✅ 18. Only respond to 'point' in allowed groups
     if is_group and from_id in ALLOWED_GROUPS and text == "point":
         return jsonify({
-            "reply": "🏆 Tournament Point Table:\nhttps://www.copafacil.com/-7j0ro@zw9t",
+            "reply": "🏆 Tournament Point Table:\nhttps://challenge.place/c/620a9e6f8aac547bb479cfd5/stage/63a493ea3b719273d482344a",
             "mentions": [],
             "delete": False
         })
@@ -246,9 +272,9 @@ def message():
 
        
 
-    # ✅ 17. Help
+    # ✅ 19. Help
     if 'help' in text:
-        return jsonify({'reply': '📋 Commands:\n• `tagall`\n• `groupinfo`\n• `admins`\n• `owner`\n• `.rules`\n• `mrng` or `good morning`\n• `bot`\n• `who are you`\n• `.champion`\n• `activity`\n• `friendly anyone` or `anyone friendly` or `friendly`\n• `gg`'})
+        return jsonify({'reply': '📋 Commands:\n• `tagall`\n• `groupinfo`\n• `admins`\n• `owner`\n• `.rules`\n• `mrng` or `good morning`\n• `bot`\n• `who are you`\n• `.champion`\n• `activity`\n• `friendly anyone` or `anyone friendly` or `friendly`\n• `gg`\n• `point`'})
 
     return jsonify({'reply': None})
 
