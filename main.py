@@ -2,11 +2,26 @@ from flask import Flask, request, jsonify
 import datetime
 from datetime import timedelta
 import re
+import random
 
 app = Flask(__name__)
 
 BOT_NAME = "💖Bot"
 user_activity = {}  # user_id -> last_active_time
+
+# Funny replies without "gg"
+funny_gg_responses = [
+    "That move was smoother than butter! 🧈",
+    "Is it over already? I blinked! 👀",
+    "I felt that in my soul 😤",
+    "You deserve an Oscar for that performance 🎭",
+    "That was more intense than a soap opera 😱",
+    "You just invented a new game mode 😂",
+    "MVP! Most Valuable Prankster 🏆",
+    "Okay, who taught you those moves? 😮",
+    "Legends say they're still recovering from that 🔥",
+    "Someone call the drama police! 🚨"
+]
 
 
 @app.route('/')
@@ -201,10 +216,15 @@ def message():
                 'reply': '❌ Only admins are allowed to share links.'
             })
 
+    # ✅ 17. Trigger only if someone types exactly "gg"
+    if text == "gg":
+        response_text = random.choice(funny_gg_responses)
+
+       
 
     # ✅ 17. Help
     if 'help' in text:
-        return jsonify({'reply': '📋 Commands:\n• `tagall`\n• `groupinfo`\n• `admins`\n• `owner`\n• `.rules`\n• `mrng` or `good morning`\n• `bot`\n• `who are you`\n• `.champion`\n• `activity`\n• `friendly anyone` or `anyone friendly` or `friendly`'})
+        return jsonify({'reply': '📋 Commands:\n• `tagall`\n• `groupinfo`\n• `admins`\n• `owner`\n• `.rules`\n• `mrng` or `good morning`\n• `bot`\n• `who are you`\n• `.champion`\n• `activity`\n• `friendly anyone` or `anyone friendly` or `friendly`\n• `gg`'})
 
     return jsonify({'reply': None})
 
