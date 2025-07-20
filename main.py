@@ -217,8 +217,10 @@ def message():
             })
 
     # ✅ 17. Trigger only if someone types exactly "gg"
-    if text == "gg":
+    if is_group and text == "gg":
         response_text = random.choice(funny_gg_responses)
+        return jsonify({'reply': response_text})
+
 
        
 
