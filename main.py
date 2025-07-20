@@ -250,7 +250,7 @@ def message():
     if is_group and from_id in ALLOWED_GROUPS:
         if text == "hari":
             # ✅ Replace this with Hari’s actual WhatsApp ID
-            hari_id = "91xxxxxxxxxx@s.whatsapp.net"
+            hari_id = "916282995415@s.whatsapp.net"
 
             return jsonify({
                 "text": "അണ്ടിക്കോയെ 🍆തോൽപ്പിക്കാൻ ഒരു അണ്ടിക്കും സാധിക്കില്ല എന്ന് പറഞ്ഞുകൊണ്ട് 💪🛑 ഹരി (Andikoya) അണ്ടി 🍆പൊക്കി നിൽക്കുന്നു 😎🔥🐒👑",
@@ -262,7 +262,7 @@ def message():
 
     # ✅ 19. Help
     if 'help' in text:
-        return jsonify({'reply': '📋 Commands:\n• `tagall`\n• `groupinfo`\n• `admins`\n• `owner`\n• `.rules`\n• `mrng` or `good morning`\n• `bot`\n• `who are you`\n• `.champion`\n• `activity`\n• `friendly anyone` or `anyone friendly` or `friendly`\n• `gg`\n• `season6`'})
+        return jsonify({'reply': '📋 Commands:\n• `tagall`\n• `groupinfo`\n• `admins`\n• `owner`\n• `.rules`\n• `mrng` or `good morning`\n• `bot`\n• `who are you`\n• `.champion`\n• `activity`\n• `friendly anyone` or `anyone friendly` or `friendly`\n• `gg`\n• `season6`\n• `hari`'})
 
     return jsonify({'reply': None})
 
