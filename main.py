@@ -40,28 +40,20 @@ ALLOWED_GROUPS = [
     "120363419378716476@g.us",  # TESTING"
 ]
 
-def get_leaderboard_text():
-    try:
-        url = "https://www.copafacil.com/-7j0ro@zw9t/leaderboard.html"  # or iframe src URL
-        res = requests.get(url)
-        soup = BeautifulSoup(res.text, "html.parser")
+def get_leaderboard_image():
+    url = "https://challenge.place/c/620a9e6f8aac547bb479cfd5/stage/63a493ea3b719273d482344a"
 
-        # Try to find the main table (adjust selector if needed)
-        table = soup.find("table")
-        if not table:
-            return "⚠️ No leaderboard found."
+    # Example using screenshotmachine (you can also use others)
+    api_url = "https://api.screenshotmachine.com"
+    params = {
+        "key": "YOUR_API_KEY",   # <- Get free API key
+        "url": url,
+        "dimension": "1024xfull",
+        "format": "png",
+    }
 
-        rows = table.find_all("tr")
-        text = "🏆 *Leaderboard*\n"
-
-        for row in rows:
-            cols = row.find_all(["td", "th"])
-            line = " | ".join(col.get_text(strip=True) for col in cols)
-            text += line + "\n"
-
-        return text.strip()
-    except Exception as e:
-        return f"❌ Error fetching leaderboard: {str(e)}"
+    screenshot_url = f"{api_url}?{urlencode(params)}"
+    return screenshot_url
 
 
 @app.route('/')
@@ -262,14 +254,12 @@ def message():
         return jsonify({'reply': response_text})
 
     # ✅ 18. Only respond to 'point' in allowed groups
-    if is_group and from_id in ALLOWED_GROUPS and text == "point":
+    if text == "point" and from_id in allowed_groups:
+        leaderboard_img = get_leaderboard_image()
         return jsonify({
-            "reply": "🏆 Tournament Point Table:\nhttps://challenge.place/c/620a9e6f8aac547bb479cfd5/stage/63a493ea3b719273d482344a",
-            "mentions": [],
-            "delete": False
+            "image": leaderboard_img,
+            "caption": "🏆 *Current Leaderboard*"
         })
-
-
        
 
     # ✅ 19. Help
