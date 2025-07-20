@@ -4,7 +4,9 @@ import datetime
 from datetime import timedelta
 import re
 import random
-from urllib.parse import urlencode
+from urllib.parse
+from langdetect import detect
+from deep_translator import GoogleTranslator
 
 app = Flask(__name__)
 
@@ -246,9 +248,29 @@ def message():
             "delete": False
         })
 
+    # ✅ 19. translate non-English/Malayalam messages
+
+    try:
+        lang = detect(text)
+    except:
+        lang = 'unknown'
+
+    # Only translate if not English or Malayalam
+    if is_group and lang not in ["en", "ml"]:
+        try:
+            # Try translating to Malayalam first
+            translated = GoogleTranslator(source='auto', target='ml').translate(text)
+        except:
+            # If Malayalam fails, fallback to English
+            translated = GoogleTranslator(source='auto', target='en').translate(text)
+
+        return jsonify({
+            "reply": f"🌐 Translation:\n{translated}"
+        })
+
    
 
-    # ✅ 19. Help
+    # ✅ 20. Help
     if 'help' in text:
         return jsonify({'reply': '📋 Commands:\n• `tagall`\n• `groupinfo`\n• `admins`\n• `owner`\n• `.rules`\n• `mrng` or `good morning`\n• `bot`\n• `who are you`\n• `.champion`\n• `activity`\n• `friendly anyone` or `anyone friendly` or `friendly`\n• `gg`\n• `season6`\n• `hari`'})
 
