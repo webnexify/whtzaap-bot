@@ -236,13 +236,29 @@ def message():
         response_text = random.choice(funny_gg_responses)
         return jsonify({'reply': response_text})
 
-    # ✅ 18. Respond to "point" only in allowed groups
+    # ✅ 18. Respond to "season6" only in allowed groups
     if is_group and from_id in ALLOWED_GROUPS and text == "season6":
         return jsonify({
             "reply": "🏆 Tournament Point Table:\nhttps://www.copafacil.com/-7j0ro@zw9t",
             "mentions": [],
             "delete": False
         })
+
+    # ✅ 18. Respond to "hari" only in allowed groups
+    if is_group and from_id in ALLOWED_GROUPS and text == "hari":
+        mention_id = None
+
+        for p in participants:
+            name = p.get("name", "").lower()
+            if "hari" in name:
+                mention_id = p.get("id")
+                break
+
+        if mention_id:
+            return jsonify({
+                "text": "അണ്ടിക്കോയെ 🍆തോൽപ്പിക്കാൻ ഒരു അണ്ടിക്കും സാധിക്കില്ല എന്ന് പറഞ്ഞുകൊണ്ട് 💪🛑 ഹരി (Andikoya) അണ്ടി 🍆പൊക്കി നിൽക്കുന്നു 😎🔥🐒👑",
+                "mentions": [mention_id]
+            })
 
        
 
