@@ -9,7 +9,7 @@ app = Flask(__name__)
 BOT_NAME = "💖Bot"
 user_activity = {}  # user_id -> last_active_time
 
-# Funny replies without "gg"
+# ✅ Funny replies without "gg"
 funny_gg_responses = [
     "That move was smoother than butter! 🧈",
     "Is it over already? I blinked! 👀",
@@ -32,7 +32,11 @@ funny_gg_responses = [
     "🔥 നീയാണ് ഗെയിമിന്റെ മോഹൻലാൽ... മാസ് എൻട്രിയിലൂടെ പൊളിച്ചു ബ്രോ 🎬👑",
     "🎮 അടിപൊളി ക്ലച്ച്... ഫോൺ കിട്ടിയില്ല, vibration കൊണ്ടാണ് പോയി കിട്ടിയത് 😭📱"
 ]
-
+# ✅ Your allowed group IDs (copy them from WhatsApp)
+ALLOWED_GROUPS = [
+    "120363048505746465@g.us",  # MCS
+    "120363419378716476@g.us",  # TESTING"
+]
 
 @app.route('/')
 def home():
@@ -230,6 +234,14 @@ def message():
     if is_group and text == "gg":
         response_text = random.choice(funny_gg_responses)
         return jsonify({'reply': response_text})
+
+    # ✅ 18. Only respond to 'point' in allowed groups
+    if is_group and from_id in ALLOWED_GROUPS and text == "point":
+        return jsonify({
+            "reply": "🏆 Tournament Point Table:\nhttps://www.copafacil.com/-7j0ro@zw9t",
+            "mentions": [],
+            "delete": False
+        })
 
 
        
