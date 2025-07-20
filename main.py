@@ -13,6 +13,10 @@ app = Flask(__name__)
 BOT_NAME = "💖Bot"
 user_activity = {}
 
+def is_probably_mizo(text):
+    common_mizo_words = ["ka", "chu", "loh", "tih", "chuan", "hriat", "zia", "eng", "awm", "che", "ti", "na", "tur"]
+    return any(word in text.lower().split() for word in common_mizo_words)
+
 funny_gg_responses = [
     "That move was smoother than butter! 🧈",
     "Is it over already? I blinked! 👀",
@@ -257,16 +261,23 @@ def message():
     except:
         detected_lang = 'unknown'
 
-    # Translate only if the language is Mizo (lus), Hindi (hi), or Arabic (ar)
-    if detected_lang in ["hi", "ar", "lus"]:
-        try:
-            translated_text = GoogleTranslator(source=detected_lang, target='en').translate(text)
-        except:
-            translated_text = GoogleTranslator(source='auto', target='en').translate(text)
+    # Check for Hindi or Arabic
+    if detected_lang in ["hi", "ar"]:
+        lang = detected_lang
+    # Try detecting Mizo using keywords
+    elif is_probably_mizo(text):
+        lang = "auto"  # Use auto detection for Mizo
+    else:
+        return jsonify({})  # Skip other languages
 
-        return jsonify({
-            "reply": f"🌐 English Translation:\n{translated_text}"
-        })
+    try:
+        translated_text = GoogleTranslator(source=lang, target='en').translate(text)
+    except:
+        translated_text = GoogleTranslator(source='auto', target='en').translate(text)
+
+    return jsonify({
+        "reply": f"🌐 English Translation:\n{translated_text}"
+    })
 
     # ✅ 20. Help
     if 'help' in text:
