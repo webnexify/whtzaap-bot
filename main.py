@@ -274,10 +274,10 @@ def message():
         translated_text = GoogleTranslator(source=lang, target='en').translate(text)
     except:
         translated_text = GoogleTranslator(source='auto', target='en').translate(text)
-
-    return jsonify({
+        return jsonify({
         "reply": f"🌐 English Translation:\n{translated_text}"
-    })
+            })
+    
 
     # ✅ 20. Help
     if 'help' in text:
