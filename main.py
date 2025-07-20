@@ -55,6 +55,8 @@ def message():
     admins = data.get('admins', [])
     sender = data.get('sender')
     joined = data.get('joined', [])
+    print("Sender ID:", data.get("sender"))
+
 
     # ✅ 1. Welcome message with rules & admin mentions
     if is_group and joined:
@@ -245,20 +247,16 @@ def message():
         })
 
     # ✅ 18. Respond to "hari" only in allowed groups
-    if is_group and from_id in ALLOWED_GROUPS and text == "hari":
-        mention_id = None
+    if is_group and from_id in ALLOWED_GROUPS:
+        if text == "hari":
+            # ✅ Replace this with Hari’s actual WhatsApp ID
+            hari_id = "91xxxxxxxxxx@s.whatsapp.net"
 
-        for p in participants:
-            name = p.get("name", "").lower()
-            if "hari" in name:
-                mention_id = p.get("id")
-                break
-
-        if mention_id:
             return jsonify({
                 "text": "അണ്ടിക്കോയെ 🍆തോൽപ്പിക്കാൻ ഒരു അണ്ടിക്കും സാധിക്കില്ല എന്ന് പറഞ്ഞുകൊണ്ട് 💪🛑 ഹരി (Andikoya) അണ്ടി 🍆പൊക്കി നിൽക്കുന്നു 😎🔥🐒👑",
-                "mentions": [mention_id]
+                "mentions": [hari_id]
             })
+
 
        
 
