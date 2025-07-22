@@ -310,7 +310,7 @@ def message():
     
 
     # ✅ 20. Help
-    if 'help' in text:
+    if is_group and 'help' in text:
         return jsonify({'reply': '📋 *Bot Commands:*\n\n• `tagall`\n• `groupinfo`\n• `admins`\n• `owner`\n• `.rules`\n• `mrng` or `good morning`\n• `bot`\n• `who are you`\n• `.champion`\n• `activity`\n• `friendly anyone` or `anyone friendly` or `friendly`\n• `gg`\n• `score`\n• `hari`'})
 
     return jsonify({'reply': None})
