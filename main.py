@@ -14,30 +14,30 @@ app = Flask(__name__)
 BOT_NAME = "💖Bot"
 user_activity = {}
 
-# def get_leaderboard_text():
-#     try:
-#         url = "https://copafacil.com/share/embedded/results/-7j0ro@zw9t/ART/results_4"
-#         headers = {
-#             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-#         }
-#         res = requests.get(url, headers=headers)
-#         soup = BeautifulSoup(res.text, "html.parser")
+def get_leaderboard_text():
+     try:
+         url = "https://copafacil.com/share/embedded/table/-7j0ro@zw9t/1752904395112/table_4"
+         headers = {
+             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+         }
+         res = requests.get(url, headers=headers)
+         soup = BeautifulSoup(res.text, "html.parser")
 
-#         table = soup.find("table")
-#         if not table:
-#             return "⚠️ No leaderboard found."
+         table = soup.find("table")
+         if not table:
+             return "⚠️ No leaderboard found."
 
-#         rows = table.find_all("tr")
-#         text = "🏆 *Leaderboard*\n\n"
+         rows = table.find_all("tr")
+         text = "🏆 *Leaderboard*\n\n"
 
-#         for row in rows:
-#             cols = row.find_all(["td", "th"])
-#             line = " | ".join(col.get_text(strip=True) for col in cols)
-#             text += line + "\n"
+         for row in rows:
+             cols = row.find_all(["td", "th"])
+             line = " | ".join(col.get_text(strip=True) for col in cols)
+             text += line + "\n"
 
-#         return text.strip()
-#     except Exception as e:
-#         return f"❌ Error fetching leaderboard: {str(e)}"
+         return text.strip()
+  except Exception as e:
+      return f"❌ Error fetching leaderboard: {str(e)}"
 
 
 
@@ -273,7 +273,7 @@ def message():
         response_text = random.choice(funny_gg_responses)
         return jsonify({'reply': response_text})
 
-    # ✅ 18. Respond to "score" only in allowed groups
+    # ✅ 18. Respond to "point" only in allowed groups
     if is_group and from_id in ALLOWED_GROUPS and text == "point":
         return jsonify({
             "reply": "🏆 Tournament Point Table:\nhttps://copafacil.com/share/embedded/table/-7j0ro@zw9t/1752904395112/table_4 ",
