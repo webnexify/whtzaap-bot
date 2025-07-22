@@ -281,8 +281,14 @@ def message():
             "delete": False
         })
 
+    # ✅ 19. Help
+    if is_group and 'help' in text:
+        return jsonify({'reply': '📋 *Bot Commands:*\n\n• `tagall`\n• `groupinfo`\n• `admins`\n• `owner`\n• `.rules`\n• `mrng` or `good morning`\n• `bot`\n• `who are you`\n• `.champion`\n• `activity`\n• `friendly anyone` or `anyone friendly` or `friendly`\n• `gg`\n• `score`\n• `hari`'})
 
-    # ✅ 19. translate non-English/Malayalam messages
+    return jsonify({'reply': None})
+
+
+    # ✅ 20. translate non-English/Malayalam messages
     if not text or not is_group:
         return jsonify({})
 
@@ -308,13 +314,5 @@ def message():
         "reply": f"🌐 English Translation:\n{translated_text}"
             })
     
-
-    # ✅ 20. Help
-    if is_group and 'help' in text:
-        return jsonify({'reply': '📋 *Bot Commands:*\n\n• `tagall`\n• `groupinfo`\n• `admins`\n• `owner`\n• `.rules`\n• `mrng` or `good morning`\n• `bot`\n• `who are you`\n• `.champion`\n• `activity`\n• `friendly anyone` or `anyone friendly` or `friendly`\n• `gg`\n• `score`\n• `hari`'})
-
-    return jsonify({'reply': None})
-
-
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3000)
