@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify
 from bs4 import BeautifulSoup
 import datetime
 from datetime import timedelta
+from flask_cors import CORS
+CORS(app)
 import re
 import requests
 import random
