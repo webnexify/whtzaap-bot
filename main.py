@@ -86,6 +86,7 @@ def home():
 def message():
     data = request.get_json()
     from_id = data.get('from')
+    print("📥 Message received in Flask:", 
     text = data.get('text', '').strip().lower() if data.get('text') else ''
     is_group = data.get('isGroup', False)
     participants = data.get('participants', [])
