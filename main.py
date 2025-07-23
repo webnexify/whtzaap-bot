@@ -38,8 +38,8 @@ def get_leaderboard_text():
              text += line + "\n"
 
          return text.strip()
-  except Exception as e:
-      return f"❌ Error fetching leaderboard: {str(e)}"
+      except Exception as e:
+       return f"❌ Error fetching leaderboard: {str(e)}"
 
 
 
