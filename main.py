@@ -316,5 +316,5 @@ def message():
         "reply": f"🌐 English Translation:\n{translated_text}"
             })
     
-if __name__ == '__main__':
+if __name__ == '__mai__':
     app.run(host='0.0.0.0', port=3000)
