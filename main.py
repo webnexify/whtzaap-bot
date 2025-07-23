@@ -3,7 +3,6 @@ from bs4 import BeautifulSoup
 import datetime
 from datetime import timedelta
 from flask_cors import CORS
-CORS(app)
 import re
 import requests
 import random
@@ -12,6 +11,7 @@ from langdetect import detect
 from deep_translator import GoogleTranslator
 
 app = Flask(__name__)
+CORS(app)
 
 BOT_NAME = "💖Bot"
 user_activity = {}
